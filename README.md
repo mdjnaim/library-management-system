@@ -18,8 +18,8 @@ An API service to demonstrate Library Management System API capabilities.
 
 |  Name | Feature 1 | Feature 2 | Feature 3 | Feature 4 | Feature 5 |
 | --- | --- | --- | --- | --- | --- |
-| Book Management | Add  book | Update book | Delete book | Show all books | Search book by title/author |
-| Member Management | Add  member | Update member | Delete member | Show all members | Search member by name |
+| Book Management | Add  book | Update book | Delete book | Show all books | Search book by keyword |
+| User Management | Add  User | Update User | Delete User | Show all User | Search User by name |
 | Borrow & Return System | Borrow book | Return book | Track which member borrowed which book | List all borrowed books | Check if a book is available |
 | Reports & Admin | Overdue books | Most borrowed book | Borrowing history | Generate member receipt (file-based) | Admin login authentication |
 
