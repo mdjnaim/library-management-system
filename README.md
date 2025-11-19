@@ -18,7 +18,7 @@ A comprehensive API service for Library Management System with Book Management, 
 
 |  Name | Feature 1 | Feature 2 | Feature 3 | Feature 4 | Feature 5 |
 | --- | --- | --- | --- | --- | --- |
-| Book Management | Add  book | Update book | Delete book | Show all books | Search book by keyword |
+| [Book Management](http://127.0.0.1:8000/book/docs) | Add  book | Update book | Delete book | Show all books | Search book by keyword |
 | User Management | Add  User | Update User | Delete User | Show all User | Search User by name |
 | Borrow & Return System | Borrow book | Return book | Track which member borrowed which book | List all borrowed books | Check if a book is available |
 | Reports & Admin | Overdue books | Most borrowed book | Borrowing history | Generate member receipt (file-based) | Admin login authentication |
@@ -55,7 +55,7 @@ library-management-system
 │    │    ├───api_user_management
 │    │    ├───api_borrow_return_system
 │    │    ├───api_report_admin_system
-│    │    └───api
+│    │    └───app
 │    │
 │    └───client
 │         ├───book_management
