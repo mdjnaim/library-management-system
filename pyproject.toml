@@ -1,7 +1,7 @@
 [project]
 name = "Library-Management-System"
-version = "0.1.0"
-description = "An API service to demonstrate Library Management System API capabilities."
+version = "2.1.0"
+description = "A comprehensive API service for Library Management System with Book Management, User Management, Borrow & Return System and Reports features."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

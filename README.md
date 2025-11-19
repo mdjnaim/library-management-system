@@ -1,6 +1,6 @@
 # **Library Management System**
 
-An API service to demonstrate Library Management System API capabilities.
+A comprehensive API service for Library Management System with Book Management, User Management, Borrow & Return System and Reports features.
 
 ## Required Libraries
 
