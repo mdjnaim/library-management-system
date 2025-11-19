@@ -23,8 +23,6 @@ A comprehensive API service for Library Management System with Book Management, 
 | Borrow & Return System | Borrow book | Return book | Track which member borrowed which book | List all borrowed books | Check if a book is available |
 | Reports & Admin | Overdue books | Most borrowed book | Borrowing history | Generate member receipt (file-based) | Admin login authentication |
 
-> Note : Hare Eatch `Feature Name` consider as API Services &  `Feature [1-5]` consider as console Server
-
 ## Services
 
 ### 1. Virtual Enviroment
