@@ -40,7 +40,7 @@ def prompt(msg, type_func=str):
             val = input(msg).strip()
             return type_func(val) if val else None
         except (ValueError, KeyboardInterrupt):
-            print("Invalid input. Try again.")
+            print("Invalid input.")
 
 def print_book(book, book_id=None):
     print("\n--- Book Info ---")
