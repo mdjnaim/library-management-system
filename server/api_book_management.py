@@ -99,7 +99,7 @@ class BookModel(BaseModel):
 
 @app.get("/", response_model=dict, status_code=200)
 async def get_all_books():
-    return {"books": book_db}
+    return book_db
 
 @app.post("/", response_model=BookModel, status_code=201)
 async def add_book(book: BookModel):
