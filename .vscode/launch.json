@@ -5,13 +5,23 @@
     "version": "0.2.5",
     "configurations": [
         {
-            "name": "Python: Run Main.py",
+            "name": "[Server]",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/main.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "justMyCode": true
+        },
+        {
+            "name": "[Client]",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/client/client.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/client",
+            "justMyCode": true
         }
+
     ]
 }
