@@ -230,7 +230,7 @@ async def track_user_borrows(user_id: int):
         "borrows": user_borrows
     }
 
-@app.get("/borrowed-books", response_model=dict, status_code=200)
+@app.get("/borrowed-books", response_model = dict, status_code=200)
 async def get_all_borrowed_books():
     ensure_database_directory()
 
@@ -266,7 +266,7 @@ async def check_book_availability(book_id: int):
     if not book:
         raise HTTPException(
             status_code = 404, 
-            detail=f"\n ------ Book with ID {book_id} not found ------ \n"
+            detail = f"\n ------ Book with ID {book_id} not found ------ \n"
         )
 
     is_available = book['available_copies'] > 0
