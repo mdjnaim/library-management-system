@@ -14,7 +14,6 @@ class BookModel(BaseModel):
     published_year: int
     copies_available: int
 
-# Update Base Model (BUG)
 class BookUpdate(BaseModel): 
     title: str = None
     author: str = None
@@ -74,7 +73,7 @@ async def add_book(book: BookModel):
                     if parts[3] == book.isbn:
                         raise HTTPException(
                             status_code=409, 
-                            detail="\n--------- Book with this ISBN already exists ---------\n"
+                            detail="Book with this ISBN already exists"
                         )
                     
     book_id = get_next_book_id()
@@ -99,7 +98,7 @@ async def get_book_by_id(book_id: int):
     if not os.path.exists(BOOK_FILE):
         raise HTTPException(
             status_code=404, 
-            detail="\n-------- Book not found --------\n"
+            detail="Book not found"
         )
     
     with open(BOOK_FILE, 'r') as f:
@@ -117,7 +116,7 @@ async def get_book_by_id(book_id: int):
                 
     raise HTTPException(
         status_code=404, 
-        detail="\n-------- Book not found --------\n"
+        detail="Book not found"
     )
 
 @app.put("/{book_id}", response_model=dict, status_code=200)
@@ -131,7 +130,7 @@ async def update_book_by_id(book_id: int, book_update: BookUpdate):
     if not os.path.exists(BOOK_FILE):
         raise HTTPException(
             status_code=404, 
-            detail="\n-------- Book not found --------\n"
+            detail="Book not found"
         )
 
     with open(BOOK_FILE, 'r') as f:
@@ -165,7 +164,7 @@ async def update_book_by_id(book_id: int, book_update: BookUpdate):
     if not book_found:
         raise HTTPException(
             status_code=404, 
-            detail="\n-------- Book not found --------\n"
+            detail="Book not found"
         )
 
     with open(BOOK_FILE, 'w') as f:
@@ -183,7 +182,7 @@ async def delete_book(book_id: int):
     if not os.path.exists(BOOK_FILE):
         raise HTTPException(
             status_code=404, 
-            detail="\n-------- Book not found --------\n"
+            detail="Book not found"
         )
 
     with open(BOOK_FILE, 'r') as f:
@@ -199,7 +198,7 @@ async def delete_book(book_id: int):
     if not book_found:
         raise HTTPException(
             status_code=404, 
-            detail="\n-------- Book not found --------\n"
+            detail="Book not found"
         )
 
     with open(BOOK_FILE, 'w') as f:
