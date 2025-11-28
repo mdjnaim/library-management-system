@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from datetime import datetime, timedelta
 from helpers.read_db import load_books, load_users, load_borrows
 from helpers.write_db import write_records
-from helpers.paths import BOOKS_FILE, USERS_FILE, BORROWS_FILE
+from helpers.paths import BOOKS_FILE, BORROWS_FILE
 
 app = FastAPI()
 
@@ -108,3 +108,16 @@ async def get_borrow_record(user_id: int = Path(..., ge=1), book_id: int = Path(
         if b['user_id'] == user_id and b['book_id'] == book_id:
             return BorrowReturnModel(**b)
     raise HTTPException(status_code=404, detail="Not Found")
+
+@app.get("/check-availability/{book_id}", status_code=200, description="Check if a book is available")
+async def check_book_availability(book_id: int = Path(..., ge=1)):
+    if book_id not in book_db:
+        raise HTTPException(status_code=404, detail="Not Found")
+    
+    book = book_db[book_id]
+    return {
+        "book_id": book_id,
+        "title": book["title"],
+        "available_copies": book["available_copies"],
+        "is_available": book["available_copies"] > 0
+    }
