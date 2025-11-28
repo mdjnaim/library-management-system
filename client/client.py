@@ -437,6 +437,7 @@ def borrow_return_menu():
         print("2. Return Book")
         print("3. Track User's Borrowed Books")
         print("4. List All Borrowed Books")
+        print("5. Check Book Availability")
         print("b. Back to Main Menu\n")
         
         cmd = input("Choice: ").strip().lower()
@@ -512,7 +513,14 @@ def borrow_return_menu():
                         print("\nNo books are currently borrowed. All books are available!")
                 except Exception as e:
                     print(f"\nError: Failed to retrieve borrowed books list. Details: {e}")
-
+            elif cmd == '5':
+                try:
+                    book_id = int(input("Enter Book ID: "))
+                    availability = client.check_book_availability(book_id)
+                    print(f"\nBook ID: {book_id}")
+                    print(f"Available Copies: {availability.get('available_copies')}")
+                except Exception as e:
+                    print(f"\nError: {e}")
             else:
                 print("Invalid choice! Please select a valid option.")
                 
