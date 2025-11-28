@@ -33,6 +33,9 @@ class BorrowReturnClient:
 
     def get_borrow_record(self, user_id, book_id):
         return self._request('GET', f'/user/{user_id}/book/{book_id}')
+    
+    def check_book_availability(self, book_id):
+        return self._request('GET', f'/check-availability/{book_id}')
 
 def print_borrow(borrow):
     print("\n--- Borrow Record ---")
