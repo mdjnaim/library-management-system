@@ -1,10 +1,16 @@
 # file: client/client.py
 import os
-import sys
 from book_management import BookManagementClient, print_book
 from user_management import UserManagementClient, print_user
-from borrow_return import BorrowReturnClient, print_borrow, print_availability
-from admin import AdminClient, print_summary, print_full_report, print_books_report, print_users_report, print_borrows_report
+from borrow_return import BorrowReturnClient, print_borrow
+from admin import (
+    AdminClient, 
+    print_full_report,
+    print_summary,
+    print_overdue_report, 
+    print_most_borrowed_report, 
+    print_borrowing_history
+)
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -431,7 +437,6 @@ def borrow_return_menu():
         print("2. Return Book")
         print("3. Track User's Borrowed Books")
         print("4. List All Borrowed Books")
-        print("5. Check Book Availability")
         print("b. Back to Main Menu\n")
         
         cmd = input("Choice: ").strip().lower()
@@ -447,105 +452,81 @@ def borrow_return_menu():
                     result = client.borrow_book(user_id, book_id)
                     print("\n------- Book Borrowed Successfully! -------\n")
                     print(f"Borrow ID: {result.get('borrow_id')}")
-                    print(f"Book: {result.get('book_title')}")
+                    print(f"Book ID: {result.get('book_id')}")
                     print(f"Due Date: {result.get('due_date')}")
                 except Exception as e:
                     error_msg = str(e)
                     if "404" in error_msg:
                         print("\nError: User or Book not found.")
-                        print("Please check if the User ID and Book ID exist.")
                     elif "400" in error_msg:
                         print("\nError: Book is not available for borrowing.")
-                        print("All copies of the book are currently borrowed.")
+                    elif "409" in error_msg:
+                        print("\nError: User has already borrowed this book.")
                     else:
                         print(f"\nError: {error_msg}")
+
             elif cmd == '2':
                 try:
-                    borrow_id = int(input("Enter Borrow ID: "))
-                    result = client.return_book(borrow_id)
-                    print("\n ----- Book Returned Successfully! ----- \n")
+                    user_id = int(input("Enter User ID: "))
+                    book_id = int(input("Enter Book ID: "))
+                    result = client.return_book(user_id, book_id)
+                    print("\n----- Book Returned Successfully! -----\n")
                     print(f"Return Date: {result.get('return_date')}")
                     print(f"Book ID: {result.get('book_id')}")
                     print(f"User ID: {result.get('user_id')}")
-                except ValueError:
-                    print("\n Error: Please enter a valid numeric Borrow ID!")
                 except Exception as e:
                     error_msg = str(e)
                     if "404" in error_msg:
-                        print("\n Error: Borrow record not found!")
-                        print("Please check if the Borrow ID exists.")
+                        print("\nError: Borrow record not found!")
                     elif "400" in error_msg:
-                        print("\n Error: This book has already been returned!")
+                        print("\nError: This book has already been returned!")
                     else:
-                        print(f"\n Error: {error_msg}")
-                
+                        print(f"\nError: {error_msg}")
+
             elif cmd == '3':
                 try:
                     user_id = int(input("Enter User ID: "))
-                    result = client.track_user_borrows(user_id)
-                    print(f"\n--- User ID: {result.get('user_id')} ---")
-                    print(f"Total Borrows: {result.get('total_borrows')}")
-                    
-                    borrows = result.get('borrows', [])
-                    if borrows:
-                        for borrow in borrows:
+                    borrows = client.track_user_borrows(user_id)
+
+                    borrowed_only = [b for b in borrows if b.get('status') == 'borrowed']
+
+                    if borrowed_only:
+                        print(f"\n--- Borrow Records for User ID: {user_id} ---")
+                        for borrow in borrowed_only:
                             print_borrow(borrow)
                     else:
                         print("\nNo borrow records found for this user.")
-                except ValueError:
-                    print("\nError: Please enter a valid numeric User ID!")
                 except Exception as e:
-                    error_msg = str(e)
-                    if "404" in error_msg:
-                        print("\nError: User not found!")
-                        print("Please check if the User ID exists.")
-                    else:
-                        print(f"\nError: {error_msg}")
-                
+                    print(f"\nError: {e}")
+
             elif cmd == '4':
                 try:
-                    result = client.list_borrowed_books()
-                    print(f"\n--- Currently Borrowed Books ---")
-                    print(f"Total: {result.get('total_borrowed')}")
-                    
-                    borrowed = result.get('borrowed_books', [])
-                    if borrowed:
-                        for borrow in borrowed:
+                    all_borrows = client.list_borrows()
+
+                    borrowed_only = [b for b in all_borrows if b.get('status') == 'borrowed']
+                    if borrowed_only:
+                        print("\n--- All Borrowed Books ---")
+                        for borrow in borrowed_only:
                             print_borrow(borrow)
                     else:
                         print("\nNo books are currently borrowed. All books are available!")
                 except Exception as e:
-                    error_msg = str(e)
-                    print(f"\n Error: Failed to retrieve borrowed books list.")
-                    print(f"Details: {error_msg}")
-            elif cmd == '5':
-                try:
-                    book_id = int(input("Enter Book ID: "))
-                    result = client.check_book_availability(book_id)
-                    print_availability(result)
-                except ValueError:
-                    print("\nError: Please enter a valid numeric Book ID!")
-                except Exception as e:
-                    error_msg = str(e)
-                    if "404" in error_msg:
-                        print("\nError: Book not found!")
-                        print("Please check if the Book ID exists.")
-                    else:
-                        print(f"\nError: {error_msg}")
-            
+                    print(f"\nError: Failed to retrieve borrowed books list. Details: {e}")
+
             else:
-                print("Invalid choice!")
+                print("Invalid choice! Please select a valid option.")
                 
             input("\nPress Enter to continue... ")
             
         except ValueError:
-            print("Error: Please enter valid numeric IDs!")
+            print("\nError: Please enter valid numeric IDs!")
             input("\nPress Enter to continue... ")
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"\nError: {e}")
             input("\nPress Enter to continue... ")
 
 def admin_reports_menu():
+    """Admin reports and analytics menu"""
     client = AdminClient("http://127.0.0.1:8000/admin")
     
     while True:
@@ -553,11 +534,12 @@ def admin_reports_menu():
         print("\n╔════════════════════════════════════╗")
         print("║  Admin Reports & Analytics         ║")
         print("╚════════════════════════════════════╝")
-        print("1. View Complete Report (All Data)")
-        print("2. View Summary Only")
-        print("3. View Books Report")
-        print("4. View Users Report")
-        print("5. View Borrows Report")
+        print("1. View Complete System Report")
+        print("2. View Summary Statistics")
+        print("3. View Overdue Books")
+        print("4. View Most Borrowed Books")
+        print("5. View Borrowing History")
+        print("6. View User-Specific Borrowing History")
         print("b. Back to Main Menu\n")
         
         cmd = input("Choice: ").strip().lower()
@@ -571,51 +553,59 @@ def admin_reports_menu():
                     report = client.get_all_reports()
                     print_full_report(report)
                 except Exception as e:
-                    print(f"\nError: Failed to retrieve complete report.")
+                    print(f"\nError: Failed to retrieve system report.")
                     print(f"Details: {e}")
-                    
+            
             elif cmd == '2':
                 try:
                     report = client.get_all_reports()
-                    if report and 'summary' in report:
+                    if 'summary' in report:
                         print_summary(report['summary'])
                     else:
-                        print("\nNo summary data available.")
+                        print("\nError: Summary data not available.")
                 except Exception as e:
-                    print(f"\nError: Failed to retrieve summary.")
+                    print(f"\nError: Failed to retrieve summary statistics.")
                     print(f"Details: {e}")
-                    
+            
             elif cmd == '3':
                 try:
-                    report = client.get_all_reports()
-                    if report and 'books' in report:
-                        print_books_report(report['books'])
-                    else:
-                        print("\nNo books data available.")
+                    overdue = client.get_overdue_books()
+                    print_overdue_report(overdue)
                 except Exception as e:
-                    print(f"\nError: Failed to retrieve books report.")
+                    print(f"\nError: Failed to retrieve overdue books.")
                     print(f"Details: {e}")
-                    
+            
             elif cmd == '4':
                 try:
-                    report = client.get_all_reports()
-                    if report and 'users' in report:
-                        print_users_report(report['users'])
-                    else:
-                        print("\nNo users data available.")
+                    most_borrowed = client.get_most_borrowed_books()
+                    print_most_borrowed_report(most_borrowed)
                 except Exception as e:
-                    print(f"\nError: Failed to retrieve users report.")
+                    print(f"\nError: Failed to retrieve most borrowed books.")
                     print(f"Details: {e}")
-                    
+            
             elif cmd == '5':
                 try:
-                    report = client.get_all_reports()
-                    if report and 'borrows' in report:
-                        print_borrows_report(report['borrows'])
-                    else:
-                        print("\nNo borrows data available.")
+                    history = client.get_borrowing_history()
+                    print_borrowing_history(history)
                 except Exception as e:
-                    print(f"\nError: Failed to retrieve borrows report.")
+                    print(f"\nError: Failed to retrieve borrowing history.")
+                    print(f"Details: {e}")
+            
+            elif cmd == '6':
+                try:
+                    user_id = int(input("\nEnter User ID: "))
+                    history = client.get_borrowing_history(user_id)
+                    
+                    if history:
+                        print(f"\n--- Borrowing History for User ID: {user_id} ---")
+                        print_borrowing_history(history)
+                    else:
+                        print(f"\nNo borrowing history found for User ID: {user_id}")
+                        
+                except ValueError:
+                    print("\nError: Please enter a valid User ID (number)!")
+                except Exception as e:
+                    print(f"\nError: Failed to retrieve user borrowing history.")
                     print(f"Details: {e}")
             
             else:
@@ -628,8 +618,8 @@ def admin_reports_menu():
             input("\nPress Enter to continue... ")
         except Exception as e:
             print(f"\nUnexpected error: {e}")
-            input("\nPress Enter to continue... ")
-
+            input("\nPress Enter to continue... ") 
+            
 def main_menu():
     while True:
         clear_screen()
@@ -646,7 +636,7 @@ def main_menu():
         
         if choice == 'q':
             print("Goodbye!")
-            sys.exit(0)
+            break
         elif choice == '1':
             book_management_menu()
         elif choice == '2':
@@ -664,4 +654,3 @@ if __name__ == "__main__":
         main_menu()
     except KeyboardInterrupt:
         print("\nExiting...")
-        sys.exit(0)
