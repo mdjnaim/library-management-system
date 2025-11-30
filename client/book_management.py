@@ -3,7 +3,7 @@ import requests
 
 class BookManagementClient:
     def __init__(self, base_url, timeout=5):
-        self.base_url = base_url.rstrip('/')
+        self.base_url = base_url
         self.timeout = timeout
 
     def _request(self, method, path, **kwargs):
@@ -18,7 +18,7 @@ class BookManagementClient:
             raise Exception(f"Request failed: {e}")
 
     def add_book(self, title, author, isbn, published_year, available_copies):
-        return self._request('POST', '', json={'title': title, 'author': author, 'isbn': isbn, 'published_year': published_year, 'available_copies': available_copies})
+        return self._request('POST', '/', json={'title': title, 'author': author, 'isbn': isbn, 'published_year': published_year, 'available_copies': available_copies})
 
     def get_book(self, book_id):
         return self._request('GET', f'/{book_id}')
@@ -31,7 +31,7 @@ class BookManagementClient:
         self._request('DELETE', f'/{book_id}')
 
     def list_books(self):
-        return self._request( 'GET', '')
+        return self._request( 'GET', '/')
 
 def print_book(book, book_id=None):
     print("\n--- Book Info ---")

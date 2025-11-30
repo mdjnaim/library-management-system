@@ -1,10 +1,9 @@
 # file: client/user_management.py
 import requests
-import os
 
 class UserManagementClient:
     def __init__(self, base_url, timeout=5):
-        self.base_url = base_url.rstrip('/')
+        self.base_url = base_url
         self.timeout = timeout
 
     def _request(self, method, path, **kwargs):
@@ -21,7 +20,7 @@ class UserManagementClient:
     def add_user(self, username, full_name, email):
         return self._request(
             'POST',
-            '', 
+            '/', 
             json={
                 'username': username, 
                 'full_name': full_name, 
@@ -52,7 +51,7 @@ class UserManagementClient:
     def list_users(self):
         return self._request(
             'GET',
-            ''
+            '/'
         )
 
 def print_user(user, user_id=None):

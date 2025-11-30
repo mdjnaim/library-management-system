@@ -145,16 +145,9 @@ def book_management_menu():
                     title = prompt("Title: ")
                     author = prompt("Author: ")
                     isbn = prompt("ISBN: ")
-                    published_year = prompt("Year: ", int)
-                    copies_available = prompt("Copies: ", int)
-                    
-                    if published_year is not None and (published_year < 1000 or published_year > 2100):
-                        print("\nError: Please enter a valid year (1000-2100)!")
-                        continue
-                    
-                    if copies_available is not None and copies_available < 0:
-                        print("\nError: Number of copies cannot be negative!")
-                        continue
+                    published_year = prompt("Year: ")
+                    copies_available = prompt("Copies: ")
+            
                     
                     if not any([title, author, isbn, published_year is not None, copies_available is not None]):
                         print("\nError: No fields to update! Please provide at least one value.")
@@ -396,7 +389,8 @@ def user_management_menu():
                         input("\nPress Enter to continue... ")
                         continue
                     
-                    confirm = input(f"\nAre you sure you want to delete User ID {user_id} ({existing_user.get('username')})? (yes/no): ").strip().lower()
+                    username = existing_user.get('username') if existing_user else 'Unknown'
+                    confirm = input(f"\nAre you sure you want to delete User ID {user_id} ({username})? (yes/no): ").strip().lower()
                     
                     if confirm in ['yes', 'y']:
                         client.delete_user(user_id)
@@ -452,9 +446,12 @@ def borrow_return_menu():
                     book_id = int(input("Enter Book ID: "))
                     result = client.borrow_book(user_id, book_id)
                     print("\n------- Book Borrowed Successfully! -------\n")
-                    print(f"Borrow ID: {result.get('borrow_id')}")
-                    print(f"Book ID: {result.get('book_id')}")
-                    print(f"Due Date: {result.get('due_date')}")
+                    if result:
+                        print(f"Borrow ID: {result.get('borrow_id')}")
+                        print(f"Book ID: {result.get('book_id')}")
+                        print(f"Due Date: {result.get('due_date')}")
+                    else:
+                        print("Book borrowed, but no details returned.")
                 except Exception as e:
                     error_msg = str(e)
                     if "404" in error_msg:
@@ -472,9 +469,12 @@ def borrow_return_menu():
                     book_id = int(input("Enter Book ID: "))
                     result = client.return_book(user_id, book_id)
                     print("\n----- Book Returned Successfully! -----\n")
-                    print(f"Return Date: {result.get('return_date')}")
-                    print(f"Book ID: {result.get('book_id')}")
-                    print(f"User ID: {result.get('user_id')}")
+                    if result:
+                        print(f"Return Date: {result.get('return_date')}")
+                        print(f"Book ID: {result.get('book_id')}")
+                        print(f"User ID: {result.get('user_id')}")
+                    else:
+                        print("Book returned, but no details returned.")
                 except Exception as e:
                     error_msg = str(e)
                     if "404" in error_msg:
@@ -489,6 +489,9 @@ def borrow_return_menu():
                     user_id = int(input("Enter User ID: "))
                     borrows = client.track_user_borrows(user_id)
 
+                    if borrows is None:
+                        borrows = []
+                    
                     borrowed_only = [b for b in borrows if b.get('status') == 'borrowed']
 
                     if borrowed_only:
@@ -503,6 +506,9 @@ def borrow_return_menu():
             elif cmd == '4':
                 try:
                     all_borrows = client.list_borrows()
+                    
+                    if all_borrows is None:
+                        all_borrows = []
 
                     borrowed_only = [b for b in all_borrows if b.get('status') == 'borrowed']
                     if borrowed_only:
@@ -513,14 +519,19 @@ def borrow_return_menu():
                         print("\nNo books are currently borrowed. All books are available!")
                 except Exception as e:
                     print(f"\nError: Failed to retrieve borrowed books list. Details: {e}")
+                    
             elif cmd == '5':
                 try:
                     book_id = int(input("Enter Book ID: "))
                     availability = client.check_book_availability(book_id)
                     print(f"\nBook ID: {book_id}")
-                    print(f"Available Copies: {availability.get('available_copies')}")
+                    if availability:
+                        print(f"Available Copies: {availability.get('available_copies')}")
+                    else:
+                        print("Available Copies: No data available")
                 except Exception as e:
                     print(f"\nError: {e}")
+                    
             else:
                 print("Invalid choice! Please select a valid option.")
                 
@@ -567,7 +578,7 @@ def admin_reports_menu():
             elif cmd == '2':
                 try:
                     report = client.get_all_reports()
-                    if 'summary' in report:
+                    if report and 'summary' in report:
                         print_summary(report['summary'])
                     else:
                         print("\nError: Summary data not available.")

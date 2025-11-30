@@ -3,6 +3,7 @@
 from fastapi import FastAPI, HTTPException
 from helpers.read_db import load_books, load_users, load_borrows
 from datetime import datetime
+from typing import Optional
 
 app = FastAPI()
 
@@ -75,7 +76,7 @@ def get_most_borrowed_books():
     
     return result
 
-def get_borrowing_history(user_id: int = None):
+def get_borrowing_history(user_id: Optional[int] = None):
     borrows = load_borrows()
     books = load_books()
     users = load_users()
@@ -146,7 +147,7 @@ async def get_most_borrowed_report():
         raise HTTPException(status_code=500, detail=f"Error fetching most borrowed books: {str(e)}")
 
 @app.get("/reports/history", response_model=list, status_code=200)
-async def get_borrowing_history_report(user_id: int = None):
+async def get_borrowing_history_report(user_id: Optional[int] = None):
     try:
         return get_borrowing_history(user_id)
     except Exception as e:
