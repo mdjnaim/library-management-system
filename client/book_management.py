@@ -33,7 +33,7 @@ class BookManagementClient:
         return self._request( 'GET', '/')
 
 def print_book(book, book_id=None):
-    print(f"ID: {book_id} Title: {book.get('title')} Author: {book.get('author')} ISBN: {book.get('isbn')} Published Year: {book.get('published_year')} Available Copies: {book.get('available_copies')}")
+    print(f"ID: {book_id} | Title: {book.get('title')} | Author: {book.get('author')} | ISBN: {book.get('isbn')} | Published Year: {book.get('published_year')} | Available Copies: {book.get('available_copies')}")
     
     
         
