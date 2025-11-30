@@ -30,61 +30,30 @@ A comprehensive API service for Library Management System with Book Management, 
 
 Create the virtual environment:
 
-```bash
-# Use `python` or `python3` as appropriate
+```cmd
 python -m venv .venv
-```=kv
+```
 
 Activate
 
-- Windows (cmd.exe)
 ```cmd
 .venv\Scripts\activate
 ```
 
-- Linux / macOS / WSL / Git Bash
+### 2. Install the dependencies
 
-```bash
-source .venv/bin/activate
+```cmd
+pip install -r requirements.txt
 ```
 
-Deactivate
+### 3. Server
 
-```bash
-deactivate
-```
-
-### 2. Server
-
-```bash
+```cmd
 python main.py
 ```
 
-### 3. Client
+### 4. Client
 
-```bash
-cd client
-python client.py
-```
-
-## Project Tree
-
-```bash
-library-management-system
-│    │
-│    ├──server
-│    │    ├───api_book_management
-│    │    ├───api_user_management
-│    │    ├───api_borrow_return_system
-│    │    ├───api_admin
-│    │    └───app
-│    │
-│    └───client
-│         ├───book_management
-│         ├───user_management
-│         ├───borrow_return_system
-│         ├───admin
-│         └───client
-│    
-└───main
+```cmd
+python client/client.py
 ```
