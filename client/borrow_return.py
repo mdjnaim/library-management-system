@@ -3,7 +3,7 @@ import requests
 
 class BorrowReturnClient:
     def __init__(self, base_url, timeout=5):
-        self.base_url = base_url.rstrip('/')
+        self.base_url = base_url
         self.timeout = timeout
 
     def _request(self, method, path, **kwargs):
